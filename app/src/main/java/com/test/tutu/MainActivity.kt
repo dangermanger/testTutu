@@ -20,17 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.test.tutu.ui.screens.DetailScreen
 import com.test.tutu.ui.screens.home.HomeViewModel
 import com.test.tutu.ui.screens.home.UiState
 import com.test.tutu.ui.theme.Purple200
@@ -91,6 +88,7 @@ fun ListPlanets(homeViewModel: HomeViewModel, navController: NavController) {
                 }
             }
             UiState.PlanetListReady -> {
+                homeViewModel.setPlanetDB(planet)
                 LazyColumn(Modifier.fillMaxSize()) {
                     planet.forEach {
                         item {

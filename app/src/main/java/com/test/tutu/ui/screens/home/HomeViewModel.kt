@@ -19,7 +19,7 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
     var id = 5
 
     var listPlanet by mutableStateOf<List<StarWarsPlanet>>(emptyList())
-    var detailPlanet by mutableStateOf(StarWarsPlanet())
+    var detailPlanet by mutableStateOf(StarWarsPlanet(-1))
     fun getPlanet() {
         viewModelScope.launch {
             val result = try {
@@ -35,6 +35,10 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
                     _uiState.value = UiState.PlanetListReady
                     listPlanet = result.data?.results ?: emptyList()
                 }
+                is NetworkResult.Error ->{
+                    _uiState.value = UiState.PlanetListReady
+                    getPlanetDB()
+                }
                 else -> {
                     _uiState.value = UiState.Error
                 }
@@ -42,6 +46,29 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
         }
     }
 
+    fun setPlanetDB(listPlanet: List<StarWarsPlanet>) {
+        viewModelScope.launch {
+            try {
+                if (listPlanet.isNotEmpty()){
+                    mainRepository.setPlanetFromDB(listPlanet)
+                }else{
+                    getPlanet()
+                }
+            }catch (e: Exception){
+
+            }
+        }
+    }
+    private fun getPlanetDB(){
+        viewModelScope.launch {
+            try {
+                listPlanet = mainRepository.getPlanetFromDB()
+            } catch (e: Exception) {
+
+            }
+
+        }
+    }
     fun getDetail() {
         viewModelScope.launch {
             val result = try {
@@ -49,15 +76,15 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
             } catch (e: Exception) {
                 NetworkResult.Error("Network request failed")
             }
-            when(result){
-                is NetworkResult.Loading ->{
+            when (result) {
+                is NetworkResult.Loading -> {
                     _uiState.value = UiState.InProgress
                 }
-                is NetworkResult.Success ->{
+                is NetworkResult.Success -> {
                     _uiState.value = UiState.DetailPlanetReady
                     detailPlanet = result.data!!
                 }
-                else ->{
+                else -> {
                     _uiState.value = UiState.Error
                 }
             }
@@ -69,6 +96,6 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
 sealed class UiState() {
     object InProgress : UiState()
     object PlanetListReady : UiState()
-    object DetailPlanetReady: UiState()
+    object DetailPlanetReady : UiState()
     object Error : UiState()
 }

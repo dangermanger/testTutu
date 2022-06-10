@@ -1,11 +1,16 @@
 package com.test.tutu.data
 
+import android.content.Context
+import androidx.room.Room
 import com.test.tutu.App
 import com.test.tutu.BuildConfig
 import com.test.tutu.Constants
+import com.test.tutu.data.database.AppDatabase
+import com.test.tutu.data.database.StarWarsPlanetDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,7 +20,6 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
 object NetworkModule {
     @Provides
     fun provideBaseUrl() = Constants.BASE_URL
@@ -42,11 +46,11 @@ object NetworkModule {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    @Provides
     @Singleton
+    @Provides
     fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 
-    @Provides
     @Singleton
+    @Provides
     fun provideApiHelper(apiHelper: ApiHelperImpl): ApiHelper = apiHelper
 }
