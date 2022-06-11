@@ -10,4 +10,7 @@ interface StarWarsPlanetDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(starWarsPlanet: List<StarWarsPlanet>)
+
+    @Query("SELECT * FROM planet WHERE id = :id")
+    suspend fun getPlanetId (id: Int): StarWarsPlanet
 }

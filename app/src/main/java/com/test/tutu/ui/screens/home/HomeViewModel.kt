@@ -38,9 +38,7 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
                 is NetworkResult.Error ->{
                     _uiState.value = UiState.PlanetListReady
                     getPlanetDB()
-                }
-                else -> {
-                    _uiState.value = UiState.Error
+
                 }
             }
         }
@@ -64,11 +62,22 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
             try {
                 listPlanet = mainRepository.getPlanetFromDB()
             } catch (e: Exception) {
-
+                _uiState.value = UiState.Error
             }
 
         }
     }
+
+   fun getDetailDB(){
+       viewModelScope.launch {
+           try {
+              detailPlanet = mainRepository.getPlanetFromIdDB(id)
+           } catch (e: Exception){
+               _uiState.value = UiState.Error
+           }
+       }
+    }
+
     fun getDetail() {
         viewModelScope.launch {
             val result = try {
@@ -85,7 +94,11 @@ class HomeViewModel @Inject constructor(private val mainRepository: MainReposito
                     detailPlanet = result.data!!
                 }
                 else -> {
-                    _uiState.value = UiState.Error
+                    try {
+                        getDetailDB()
+                    } catch (e: Exception){
+                        _uiState.value = UiState.Error
+                    }
                 }
             }
         }

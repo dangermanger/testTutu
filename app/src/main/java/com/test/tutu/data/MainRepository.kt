@@ -30,4 +30,7 @@ class MainRepository @Inject constructor(
         starWarsPlanetDao.insertAll(starWarsPlanet)
     }
 
+    suspend fun getPlanetFromIdDB(id: Int): StarWarsPlanet{
+        return starWarsPlanetDao.getPlanetId(id)
+    }
 }
